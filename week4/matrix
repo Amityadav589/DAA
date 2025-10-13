@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int** allocateMatrix(int rows, int cols) {
+    int** matrix = (int**)malloc(rows * sizeof(int*));
+    for (int i = 0; i < rows; ++i)
+        matrix[i] = (int*)malloc(cols * sizeof(int));
+    return matrix;
+}
+
+
+void inputMatrix(int** matrix, int rows, int cols, char name) {
+    printf("Enter elements for Matrix %c (%dx%d):\n", name, rows, cols);
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+            scanf("%d", &matrix[i][j]);
+}
+
+
+int** multiplyMatrices(int** A, int** B, int r1, int c1, int c2) {
+    int** result = allocateMatrix(r1, c2);
+    for (int i = 0; i < r1; ++i)
+        for (int j = 0; j < c2; ++j) {
+            result[i][j] = 0;
+            for (int k = 0; k < c1; ++k)
+                result[i][j] += A[i][k] * B[k][j];
+        }
+    return result;
+}
+
+void displayMatrix(int** matrix, int rows, int cols, char name) {
+    printf("Matrix %c:\n", name);
+    for (int i = 0; i < rows; ++i) {
+        printf("| ");
+        for (int j = 0; j < cols; ++j)
+            printf("%d ", matrix[i][j]);
+        printf("|\n");
+    }
+    printf("\n");
+}
+
+void freeMatrix(int** matrix, int rows) {
+    for (int i = 0; i < rows; ++i)
+        free(matrix[i]);
+    free(matrix);
+}
+
+int main() {
+    int r1, c1, r2, c2;
+
+    printf("Enter rows and columns for Matrix A: ");
+    scanf("%d %d", &r1, &c1);
+
+    printf("Enter rows and columns for Matrix B: ");
+    scanf("%d %d", &r2, &c2);
+
+    if (c1 != r2) {
+        printf("Matrix multiplication not possible! Columns of A must equal rows of B.\n");
+        return 0;
+    }
+
+    int** matrixA = allocateMatrix(r1, c1);
+    int** matrixB = allocateMatrix(r2, c2);
+
+    inputMatrix(matrixA, r1, c1, 'A');
+    inputMatrix(matrixB, r2, c2, 'B');
+
+    int** resultMatrix = multiplyMatrices(matrixA, matrixB, r1, c1, c2);
+
+    displayMatrix(matrixA, r1, c1, 'A');
+    displayMatrix(matrixB, r2, c2, 'B');
+    displayMatrix(resultMatrix, r1, c2, 'R'); // R for Result
+
+    freeMatrix(matrixA, r1);
+    freeMatrix(matrixB, r2);
+    freeMatrix(resultMatrix, r1);
+
+    return 0;
+}
