@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define INF 1000000000
+
+void floydWarshall(int** dist, int V) {
+    for (int k = 0; k < V; k++) {
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                if (dist[i][k] < INF && dist[k][j] < INF) {
+                    int newDist = dist[i][k] + dist[k][j];
+                    if (newDist < dist[i][j])
+                        dist[i][j] = newDist;
+                }
+            }
+        }
+    }
+}
+
+void printMatrix(int** dist, int V) {
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            if (dist[i][j] == INF)
+                printf("INF ");
+            else
+                printf("%d ", dist[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int V;
+    scanf("%d", &V);
+
+    int** dist = (int**)malloc(V * sizeof(int*));
+    for (int i = 0; i < V; i++) {
+        dist[i] = (int*)malloc(V * sizeof(int));
+    }
+
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            scanf("%d", &dist[i][j]);
+        }
+    }
+
+    floydWarshall(dist, V);
+    printMatrix(dist, V);
+
+    for (int i = 0; i < V; i++) {
+        free(dist[i]);
+    }
+    free(dist);
+
+    return 0;
+}
