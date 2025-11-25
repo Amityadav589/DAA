@@ -1,0 +1,26 @@
+def kmp_search(text, pat):
+    # build lps
+    m, n = len(pat), len(text)
+    lps = [0]*m
+    j = 0
+    for i in range(1, m):
+        while j and pat[i] != pat[j]:
+            j = lps[j-1]
+        if pat[i] == pat[j]:
+            j += 1; lps[i] = j
+
+    # search
+    res = []
+    j = 0
+    for i,ch in enumerate(text):
+        while j and ch != pat[j]:
+            j = lps[j-1]
+        if ch == pat[j]:
+            j += 1
+            if j == m:
+                res.append(i-m+1)
+                j = lps[j-1]
+    return res
+
+# example
+print(kmp_search("ababcababc", "ababc"))  # [0,5]
